@@ -22,33 +22,46 @@ df_movies=df_movies.reset_index(drop=True) # reseteamos el indice del dataframe
 
 @app.get('/cantidad_filmaciones_mes')
 async def cantidad_filmaciones_mes(mes: str):
-    '''Devuelve la cantidad de peliculas estrenadas en un determinado mes
+    '''Devuelve la cantidad de películas estrenadas en un determinado mes
     
     Args:
-
         mes (str): Nombre del mes en español
 
     Returns:
-
-        str (valido) : La cantidad de peliculas que fueron estrenadas en el mes
-        str (invalido) : Respuesta que indica que se ingreo un mes incorrecto
-    
+        str (valido) : La cantidad de películas que fueron estrenadas en el mes
+        str (invalido) : Respuesta que indica que se ingresó un mes incorrecto
     '''
-    locale.setlocale(locale.LC_TIME, 'es_ES') # cambiamos la configuracion a local - español
+    #locale.setlocale(locale.LC_TIME, 'es_ES') # cambiamos la configuracion a local - español
+    # Diccionario de meses en español a inglés
+    meses_espanol = {
+        "enero": "January",
+        "febrero": "February",
+        "marzo": "March",
+        "abril": "April",
+        "mayo": "May",
+        "junio": "June",
+        "julio": "July",
+        "agosto": "August",
+        "septiembre": "September",
+        "octubre": "October",
+        "noviembre": "November",
+        "diciembre": "December"
+    }
 
-    n=0
-    for i in df_movies.release_date:
-        if i.strftime('%B').lower() == mes.lower():
-            
-            n+=1
-        else:
-            pass
-    
-    if n==0:
+    # Normalizar el mes ingresado
+    mes_normalizado = mes.lower()
 
-        return {'message':'Ingreso un mes incorrecto'}
-    else:
-        return {"message": f"{n} cantidad de películas fueron estrenadas en el mes de {mes.capitalize()}!"}
+    # Verificar si el mes ingresado es válido
+    if mes_normalizado not in meses_espanol:
+        return {'message': 'Ingreso un mes incorrecto'}
+
+    n = 0
+    for fecha in df_movies.release_date:
+        if fecha.strftime('%B').lower() == meses_espanol[mes_normalizado].lower():
+            n += 1
+
+    return {"message": f"{n} cantidad de películas fueron estrenadas en el mes de {mes.capitalize()}!"}
+
 
 @app.get('/cantidad_filmaciones_dia')
 async def cantidad_filmaciones_dia(dia: str):
@@ -82,41 +95,42 @@ async def cantidad_filmaciones_dia(dia: str):
         return {"message": f"{n} cantidad de películas fueron estrenadas en el dia {dia.capitalize()}!"}
 
 @app.get('/titulo_de_la_filmación')
-async def score_titulo(titulo_de_la_filmación: str):
-    '''Devuelve informacion como año de estreno y la popularidad de una pelicula
+async def cantidad_filmaciones_dia(dia: str):
+    '''Devuelve la cantidad de películas estrenadas en un determinado día
     
     Args:
-
-        titulo_de_la_filmación (str): Nombre de la pelicula
+        dia (str): Nombre del día en español
 
     Returns:
-
-        str (valido) : La película {titulo_de_la_filmación} fue estrenada en el año {year} con un score/popularidad de {score}
-        str (invalido) : 'La pelicula {titulo_de_la_filmación} no existe'
-    
+        str (valido) : La cantidad de películas que fueron estrenadas en ese día
+        str (invalido) : Respuesta que indica que se ingresó un día incorrecto
     '''
-    n=0 
 
-    for i in range(len(df_movies.title)):
-        
-        if df_movies.title[i].lower() == titulo_de_la_filmación.lower(): #obtenemos el dia en español y lo comparamos con el valor ingresado
-    
-            
-            lista_score = df_movies.loc[i,['title', 'release_year', 'popularity']].values # filtramos las columnas y posteriomente extraemos los valores
-            movie = lista_score[0]
-            year = lista_score[1]
-            score = lista_score[2]
-            n+=1 # definimos una variable que se sumara una unidad en cada iteracion dentro de la condicion
-            return {'message':f'La película {movie} fue estrenada en el año {year} con un score/popularidad de {score}'}
-        
-        else:
-            pass
-    
-    if n==0:
-        return {'message':f'La pelicula {titulo_de_la_filmación} no existe'}
+    # Diccionario de días en español a inglés
+    dias_espanol = {
+        "lunes": "Monday",
+        "martes": "Tuesday",
+        "miércoles": "Wednesday",
+        "jueves": "Thursday",
+        "viernes": "Friday",
+        "sábado": "Saturday",
+        "domingo": "Sunday"
+    }
 
-    else:
-        pass
+    # Normalizar el día ingresado
+    dia_normalizado = dia.lower()
+
+    # Verificar si el día ingresado es válido
+    if dia_normalizado not in dias_espanol:
+        return {'message': 'Ingreso un día incorrecto'}
+
+    n = 0
+    for fecha in df_movies.release_date:  # Iteramos la columna
+        if fecha.strftime('%A').lower() == dias_espanol[dia_normalizado].lower():  # Comparamos
+            n += 1  # Sumamos si coincide
+
+    return {"message": f"{n} cantidad de películas fueron estrenadas en el día {dia.capitalize()}!"}
+
 @app.get('/titulo_de_la_filmación_votos')
 async def votos_titulo(titulo_de_la_filmación: str):
 
