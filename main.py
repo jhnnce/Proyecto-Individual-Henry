@@ -7,6 +7,7 @@ import re
 from nltk.stem.porter import PorterStemmer
 import locale
 import numpy as np
+import os
 
 app = FastAPI()
 
@@ -319,4 +320,5 @@ def recomendacion(titulo: str):
         return {'message':f'La pelicula {titulo}, No existe'}
 if __name__ == '__main__':
     import uvicorn
-    uvicorn.run(app, host='0.0.0.0', port=8000)  # Asegúrate de usar el puerto 8000 si es el que prefieres
+    port = int(os.getenv("PORT", 8000))
+    uvicorn.run(app, host='0.0.0.0', port=port)
