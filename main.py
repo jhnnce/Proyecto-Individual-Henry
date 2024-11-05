@@ -19,58 +19,6 @@ df_movies=df_movies.reset_index(drop=True) # reseteamos el indice del dataframe
 
 # VARIABLES PARA EL SISTEMA DE RECOMENDACION
 
-corpus_overview = []
-for i in range(0, df_movies.shape[0]):
-        review = re.sub('[^a-zA-Z]', ' ', df_movies['overview'][i]) # solo toma todas las palabras que contengan de A a la Z tanto en mayusculas como minuculas
-        review = review.lower() # transformamos a minusculas
-        review = review.split() # cada palabra estara separada por comas y seran almacenadas en una lista
-        ps = PorterStemmer() #para quedarnos solo con las palabras raiz ejemplo loved -> love
-        
-        review = [ps.stem(word) for word in review] # guardamos en una lista todas las palabras ya stemizadas(convertidas a su raiz)
-        review = ' '.join(review) # unimos las palabras de la lista por un espacio en blanco
-        corpus_overview.append(review)
-            
-        
-
-
-    # preparamos la funcion que quitara todas las palabras sin relevancia (stopwords)
-
-vectorizer = TfidfVectorizer(stop_words='english')
-
-overview_matrix = vectorizer.fit_transform(corpus_overview)
-
-corpus_genres = []
-for i in range(0, df_movies.shape[0]):
-        review = re.sub('[^a-zA-Z]', ' ', df_movies['genres'][i]) # solo toma todas las palabras que contengan de A a la Z tanto en mayusculas como minuculas
-        review = review.lower() # transformamos a minusculas
-        review = review.split() # cada palabra estara separada por comas y seran almacenadas en una lista
-        #ps = PorterStemmer() No stemizamos porque no haria ninguna diferencia para este caso
-
-        review = [word for word in review] # guardamos en una lista todas las palabras que no sean stopwords
-        review = ' '.join(review) # unimos las palabras de la lista por un espacio en blanco
-        corpus_genres.append(review)
-genres_matrix = vectorizer.fit_transform(corpus_genres)
-
-    
-
-corpus_collection = []
-for i in range(0, df_movies.shape[0]): # iteramos las 5000 filas de la columna belongs_to_collection
-        review = re.sub('[^a-zA-Z]', ' ', df_movies['belongs_to_collection'][i]) #solo toma los valores de A a la Z tanto en mayusculas como minuculas
-        review = review.lower() # transformamos a minusculas
-        review = review.split() # cada palabra estara separada por comas y seran almacenadas en una lista
-        #ps = PorterStemmer() No stemizamos porque no haria ninguna diferencia para este caso
-        review = [word for word in review] # guardamos en una lista todas las palabras que no sean stopwords
-        review = ' '.join(review) # unimos las palabras de la lista por un espacio en blanco
-        corpus_collection.append(review)
-
-    # convertimos nuestra lista de palabras en vectores
-collection_matrix = vectorizer.fit_transform(corpus_collection)
-
-
-features = np.column_stack([collection_matrix.toarray(), genres_matrix.toarray(), overview_matrix.toarray()])
-
-similarity_matrix = cosine_similarity(features)
-
 
 @app.get('/cantidad_filmaciones_mes')
 async def cantidad_filmaciones_mes(mes: str):
@@ -304,7 +252,57 @@ def get_director(nombre_director: str):
 @app.get('/recomendacion') 
 def recomendacion(titulo: str):
 
+    corpus_overview = []
+    for i in range(0, df_movies.shape[0]):
+            review = re.sub('[^a-zA-Z]', ' ', df_movies['overview'][i]) # solo toma todas las palabras que contengan de A a la Z tanto en mayusculas como minuculas
+            review = review.lower() # transformamos a minusculas
+            review = review.split() # cada palabra estara separada por comas y seran almacenadas en una lista
+            ps = PorterStemmer() #para quedarnos solo con las palabras raiz ejemplo loved -> love
+            
+            review = [ps.stem(word) for word in review] # guardamos en una lista todas las palabras ya stemizadas(convertidas a su raiz)
+            review = ' '.join(review) # unimos las palabras de la lista por un espacio en blanco
+            corpus_overview.append(review)
+                
+            
 
+
+        # preparamos la funcion que quitara todas las palabras sin relevancia (stopwords)
+
+    vectorizer = TfidfVectorizer(stop_words='english')
+
+    overview_matrix = vectorizer.fit_transform(corpus_overview)
+
+    corpus_genres = []
+    for i in range(0, df_movies.shape[0]):
+            review = re.sub('[^a-zA-Z]', ' ', df_movies['genres'][i]) # solo toma todas las palabras que contengan de A a la Z tanto en mayusculas como minuculas
+            review = review.lower() # transformamos a minusculas
+            review = review.split() # cada palabra estara separada por comas y seran almacenadas en una lista
+            #ps = PorterStemmer() No stemizamos porque no haria ninguna diferencia para este caso
+
+            review = [word for word in review] # guardamos en una lista todas las palabras que no sean stopwords
+            review = ' '.join(review) # unimos las palabras de la lista por un espacio en blanco
+            corpus_genres.append(review)
+    genres_matrix = vectorizer.fit_transform(corpus_genres)
+
+        
+
+    corpus_collection = []
+    for i in range(0, df_movies.shape[0]): # iteramos las 5000 filas de la columna belongs_to_collection
+            review = re.sub('[^a-zA-Z]', ' ', df_movies['belongs_to_collection'][i]) #solo toma los valores de A a la Z tanto en mayusculas como minuculas
+            review = review.lower() # transformamos a minusculas
+            review = review.split() # cada palabra estara separada por comas y seran almacenadas en una lista
+            #ps = PorterStemmer() No stemizamos porque no haria ninguna diferencia para este caso
+            review = [word for word in review] # guardamos en una lista todas las palabras que no sean stopwords
+            review = ' '.join(review) # unimos las palabras de la lista por un espacio en blanco
+            corpus_collection.append(review)
+
+        # convertimos nuestra lista de palabras en vectores
+    collection_matrix = vectorizer.fit_transform(corpus_collection)
+
+
+    features = np.column_stack([collection_matrix.toarray(), genres_matrix.toarray(), overview_matrix.toarray()])
+
+    similarity_matrix = cosine_similarity(features)
     
     movie = df_movies[df_movies['title'].str.lower() == titulo.lower()]
 
@@ -318,7 +316,6 @@ def recomendacion(titulo: str):
         
     else:
         return {'message':f'La pelicula {titulo}, No existe'}
-
 if __name__ == '__main__':
     import uvicorn
     port = int(os.getenv("PORT", 8000))
