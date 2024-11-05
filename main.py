@@ -8,11 +8,12 @@ from nltk.stem.porter import PorterStemmer
 import locale
 import numpy as np
 import os
+import sqlite3
 
 app = FastAPI()
 
 
-df_movies = pd.read_csv('Dataset/df_movies.csv', sep=',') #leemos el dataset 
+df_movies = pd.read_csv('D:/HENRY REPO/Proyecto Individual/Movies-20241022T010521Z-001/Movies/Notebook/df_movies.csv', sep=',') #leemos el dataset 
 df_movies.release_date = df_movies.release_date.apply(pd.to_datetime) #transformamos la columna release_date en formato datetime
 df_movies.dropna(inplace=True) # eliminamos datos faltantes en caso las haya
 df_movies=df_movies.reset_index(drop=True) # reseteamos el indice del dataframe
@@ -56,45 +57,14 @@ async def cantidad_filmaciones_mes(mes: str):
         return {'message': 'Ingreso un mes incorrecto'}
 
     n = 0
-    for fecha in df_movies.release_date:
-        if fecha.strftime('%B').lower() == meses_espanol[mes_normalizado].lower():
-            n += 1
+    for fecha in df_movies.release_date:# Iteramos la columna
+        if fecha.strftime('%B').lower() == meses_espanol[mes_normalizado].lower(): # Comparamos
+            n += 1 # Sumamos si coincide
 
     return {"message": f"{n} cantidad de películas fueron estrenadas en el mes de {mes.capitalize()}!"}
 
 
 @app.get('/cantidad_filmaciones_dia')
-async def cantidad_filmaciones_dia(dia: str):
-
-    '''Devuelve la cantidad de peliculas estrenadas en un determinado dia
-    
-    Args:
-
-        dia (str): Nombre del dia en español
-
-    Returns:
-
-        str (valido) : La cantidad de peliculas que fueron estrenadas en ese dia
-        str (invalido) : Respuesta que indica que se ingreo un dia incorrecto
-    
-    '''
-    locale.setlocale(locale.LC_TIME, 'es_ES') # cambiamos la configuracion a local - español
-
-    n=0
-    for i in df_movies.release_date: # iteramos la columna
-        if i.strftime('%A').lower() == dia.lower(): #obtenemos el mes en español y lo comparamos con el valor ingresado
-            
-            n+=1 # definimos una variable que se sumara una unidad en cada iteracion dentro de la condicion
-        else:
-            pass
-    if n==0:
-        return {'message':'Ingreso un dia incorrecto'}
-
-    else:
-    
-        return {"message": f"{n} cantidad de películas fueron estrenadas en el dia {dia.capitalize()}!"}
-
-@app.get('/titulo_de_la_filmación')
 async def cantidad_filmaciones_dia(dia: str):
     '''Devuelve la cantidad de películas estrenadas en un determinado día
     
@@ -105,7 +75,7 @@ async def cantidad_filmaciones_dia(dia: str):
         str (valido) : La cantidad de películas que fueron estrenadas en ese día
         str (invalido) : Respuesta que indica que se ingresó un día incorrecto
     '''
-
+    #locale.setlocale(locale.LC_TIME, 'es_ES') # cambiamos la configuracion a local - español
     # Diccionario de días en español a inglés
     dias_espanol = {
         "lunes": "Monday",
@@ -131,6 +101,43 @@ async def cantidad_filmaciones_dia(dia: str):
 
     return {"message": f"{n} cantidad de películas fueron estrenadas en el día {dia.capitalize()}!"}
 
+
+@app.get('/titulo_de_la_filmación')
+async def score_titulo(titulo_de_la_filmación: str):
+    '''Devuelve informacion como año de estreno y la popularidad de una pelicula
+    
+    Args:
+
+        titulo_de_la_filmación (str): Nombre de la pelicula
+
+    Returns:
+
+        str (valido) : La película {titulo_de_la_filmación} fue estrenada en el año {year} con un score/popularidad de {score}
+        str (invalido) : 'La pelicula {titulo_de_la_filmación} no existe'
+    
+    '''
+    n=0 
+
+    for i in range(len(df_movies.title)):
+        
+        if df_movies.title[i].lower() == titulo_de_la_filmación.lower(): #obtenemos el dia en español y lo comparamos con el valor ingresado
+    
+            
+            lista_score = df_movies.loc[i,['title', 'release_year', 'popularity']].values # filtramos las columnas y posteriomente extraemos los valores
+            movie = lista_score[0]
+            year = lista_score[1]
+            score = lista_score[2]
+            n+=1 # definimos una variable que se sumara una unidad en cada iteracion dentro de la condicion
+            return {'message':f'La película {movie} fue estrenada en el año {year} con un score/popularidad de {score}'}
+        
+        else:
+            pass
+    
+    if n==0:
+        return {'message':f'La pelicula {titulo_de_la_filmación} no existe'}
+
+    else:
+        pass
 @app.get('/titulo_de_la_filmación_votos')
 async def votos_titulo(titulo_de_la_filmación: str):
 
@@ -266,63 +273,13 @@ def get_director(nombre_director: str):
 @app.get('/recomendacion') 
 def recomendacion(titulo: str):
 
-    corpus_overview = []
-    for i in range(0, df_movies.shape[0]):
-            review = re.sub('[^a-zA-Z]', ' ', df_movies['overview'][i]) # solo toma todas las palabras que contengan de A a la Z tanto en mayusculas como minuculas
-            review = review.lower() # transformamos a minusculas
-            review = review.split() # cada palabra estara separada por comas y seran almacenadas en una lista
-            ps = PorterStemmer() #para quedarnos solo con las palabras raiz ejemplo loved -> love
-            
-            review = [ps.stem(word) for word in review] # guardamos en una lista todas las palabras ya stemizadas(convertidas a su raiz)
-            review = ' '.join(review) # unimos las palabras de la lista por un espacio en blanco
-            corpus_overview.append(review)
-                
-            
-
-
-        # preparamos la funcion que quitara todas las palabras sin relevancia (stopwords)
-
-    vectorizer = TfidfVectorizer(stop_words='english')
-
-    overview_matrix = vectorizer.fit_transform(corpus_overview)
-
-    corpus_genres = []
-    for i in range(0, df_movies.shape[0]):
-            review = re.sub('[^a-zA-Z]', ' ', df_movies['genres'][i]) # solo toma todas las palabras que contengan de A a la Z tanto en mayusculas como minuculas
-            review = review.lower() # transformamos a minusculas
-            review = review.split() # cada palabra estara separada por comas y seran almacenadas en una lista
-            #ps = PorterStemmer() No stemizamos porque no haria ninguna diferencia para este caso
-
-            review = [word for word in review] # guardamos en una lista todas las palabras que no sean stopwords
-            review = ' '.join(review) # unimos las palabras de la lista por un espacio en blanco
-            corpus_genres.append(review)
-    genres_matrix = vectorizer.fit_transform(corpus_genres)
-
-        
-
-    corpus_collection = []
-    for i in range(0, df_movies.shape[0]): # iteramos las 5000 filas de la columna belongs_to_collection
-            review = re.sub('[^a-zA-Z]', ' ', df_movies['belongs_to_collection'][i]) #solo toma los valores de A a la Z tanto en mayusculas como minuculas
-            review = review.lower() # transformamos a minusculas
-            review = review.split() # cada palabra estara separada por comas y seran almacenadas en una lista
-            #ps = PorterStemmer() No stemizamos porque no haria ninguna diferencia para este caso
-            review = [word for word in review] # guardamos en una lista todas las palabras que no sean stopwords
-            review = ' '.join(review) # unimos las palabras de la lista por un espacio en blanco
-            corpus_collection.append(review)
-
-        # convertimos nuestra lista de palabras en vectores
-    collection_matrix = vectorizer.fit_transform(corpus_collection)
-
-
-    features = np.column_stack([collection_matrix.toarray(), genres_matrix.toarray(), overview_matrix.toarray()])
-
-    similarity_matrix = cosine_similarity(features)
+    similarity_matrix_df = pd.read_csv('D:/HENRY REPO\Proyecto Individual/Movies-20241022T010521Z-001/Movies/Notebook/similarity_matrix_df.csv', sep=',')
     
     movie = df_movies[df_movies['title'].str.lower() == titulo.lower()]
 
     if not movie.empty:
         movie_index = movie.index[0] #obtenemos el indice
-        movie_similarities = similarity_matrix[movie_index] # obtenemos la fila que contiene los valores de similitud entre todas las peliculas y la pelicula especificada 
+        movie_similarities = similarity_matrix_df.iloc[movie_index,:] # obtenemos la fila que contiene los valores de similitud entre todas las peliculas y la pelicula especificada 
         most_similar_movie_indices = np.argsort(-movie_similarities) # ordenamos los indices de forma descendente
         most_similar_movie = df_movies.loc[most_similar_movie_indices, 'title'] # buscamos todas las peliculas similares con respecto a los indices de las peliculas en el dataset original
         
@@ -330,3 +287,7 @@ def recomendacion(titulo: str):
         
     else:
         return {'message':f'La pelicula {titulo}, No existe'}
+if __name__ == '__main__':
+    import uvicorn
+    port = int(os.getenv("PORT", 8000))
+    uvicorn.run(app, host='0.0.0.0', port=port)
