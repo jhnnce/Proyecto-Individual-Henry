@@ -13,7 +13,7 @@ import sqlite3
 app = FastAPI()
 
 
-df_movies = pd.read_csv('D:/HENRY REPO/Proyecto Individual/Movies-20241022T010521Z-001/Movies/Notebook/df_movies.csv', sep=',') #leemos el dataset 
+df_movies = pd.read_csv('Dataset/df_movies.csv', sep=',') #leemos el dataset 
 df_movies.release_date = df_movies.release_date.apply(pd.to_datetime) #transformamos la columna release_date en formato datetime
 df_movies.dropna(inplace=True) # eliminamos datos faltantes en caso las haya
 df_movies=df_movies.reset_index(drop=True) # reseteamos el indice del dataframe
@@ -273,7 +273,7 @@ def get_director(nombre_director: str):
 @app.get('/recomendacion') 
 def recomendacion(titulo: str):
 
-    similarity_matrix_df = pd.read_csv('D:/HENRY REPO\Proyecto Individual/Movies-20241022T010521Z-001/Movies/Notebook/similarity_matrix_df.csv', sep=',')
+    similarity_matrix_df = pd.read_csv('Dataset/similarity_matrix_df.csv', sep=',')
     
     movie = df_movies[df_movies['title'].str.lower() == titulo.lower()]
 
