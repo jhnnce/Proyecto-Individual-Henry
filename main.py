@@ -11,7 +11,7 @@ import numpy as np
 app = FastAPI()
 
 
-df_movies = pd.read_csv('df_movies.csv', sep=',') #leemos el dataset 
+df_movies = pd.read_csv('Dataset/df_movies.csv', sep=',') #leemos el dataset 
 df_movies.release_date = df_movies.release_date.apply(pd.to_datetime) #transformamos la columna release_date en formato datetime
 df_movies.dropna(inplace=True) # eliminamos datos faltantes en caso las haya
 df_movies=df_movies.reset_index(drop=True) # reseteamos el indice del dataframe
