@@ -3,12 +3,8 @@ import pandas as pd
 
 from sklearn.feature_extraction.text import TfidfVectorizer 
 from sklearn.metrics.pairwise import cosine_similarity
-import re 
-from nltk.stem.porter import PorterStemmer
-import locale
 import numpy as np
 import os
-import sqlite3
 
 app = FastAPI()
 
