@@ -76,10 +76,10 @@ async def cantidad_filmaciones_dia(dia: str):
     dias_espanol = {
         "lunes": "Monday",
         "martes": "Tuesday",
-        "miércoles": "Wednesday",
+        "miercoles": "Wednesday",
         "jueves": "Thursday",
         "viernes": "Friday",
-        "sábado": "Saturday",
+        "sabado": "Saturday",
         "domingo": "Sunday"
     }
 
