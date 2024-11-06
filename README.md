@@ -57,7 +57,7 @@ Se aplicaron modelos de recomendación como la similitud del coseno, librerías 
 
 Se identificaron columnas relevantes para el sistema de recomendación como: belongs_to_collection, genres y overview que propocionan informacion suficiente para este fin.
 
-Al realizar el filtro o reduccion del dataset por cantidad de votos ordenados de mayor a menor, se dejo de la lado usar estas mismas columnas como vote_average (promedio de votos) y vote_count (cantidad de votos ) para el sistema de recomendación, ademas para este caso, estas columnas podrían alterar los resultados ya que el algoritmo podría terminar recomendando por popularidad antes que por similitud.
+Al realizar el filtro o reduccion del dataset por cantidad de votos ordenados de mayor a menor, se dejo de la lado usar estas mismas columnas como vote_average (promedio de votos), vote_count (cantidad de votos ) y tambien Popuarity (popularidad) para el sistema de recomendación, ademas para este caso, estas columnas podrían alterar los resultados ya que el algoritmo podría terminar recomendando por popularidad o por votos antes que por similitud.
 
 ## Resultados y Conclusiones
 
