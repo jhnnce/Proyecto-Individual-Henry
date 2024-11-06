@@ -247,7 +247,7 @@ def get_director(nombre_director: str):
             
             retorno_total += retorno # definimos una variable que se sumara el valor del retorno en cada iteracion
 
-            mj += f'\n{title}, estrenada en {release_date}, el mismo ha conseguido un retorno de {retorno} y una ganancia de {revenue}' #en cada iteracion concatenamos el siguiente string
+            mj += f'\n{title}, estrenada en {release_date.date()}, el mismo ha conseguido un retorno de {retorno} y una ganancia de {revenue}' #en cada iteracion concatenamos el siguiente string
 
             
         
