@@ -1,4 +1,7 @@
-# PROYECTO - SISTEMA DE RECOMENDACION DE PELICULAS
+
+<h1 align="center">PROYECTO - SISTEMA DE RECOMENDACION DE PELICULAS</h1>
+
+
 
 ![Screenshot_20241211-015047_Instagram](https://github.com/user-attachments/assets/c0d5bb4f-5627-46f5-8996-4b05a0ba7431)
 
