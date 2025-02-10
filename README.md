@@ -56,17 +56,17 @@ Se analizaron los datos ya procesados mediante gráficos y consultas. Eleccion d
 3. Creación de funciones para la API:  
 Se desarrollaron 6 funciones principales:  
 
-- def cantidad_filmaciones_mes( Mes ): Se ingresa un mes en idioma Español. Debe devolver la cantidad de películas que fueron estrenadas en el mes consultado en la totalidad del dataset.
+- **def cantidad_filmaciones_mes( Mes )**: Se ingresa un mes en idioma Español. Debe devolver la cantidad de películas que fueron estrenadas en el mes consultado en la totalidad del dataset.
 
-- def cantidad_filmaciones_dia( Dia ): Se ingresa un día en idioma Español. Debe devolver la cantidad de películas que fueron estrenadas en día consultado en la totalidad del dataset.
+- **def cantidad_filmaciones_dia( Dia )**: Se ingresa un día en idioma Español. Debe devolver la cantidad de películas que fueron estrenadas en día consultado en la totalidad del dataset.
 
-- def score_titulo( titulo_de_la_filmación ): Se ingresa el título de una filmación esperando como respuesta el título, el año de estreno y el score.
+- **def score_titulo( titulo_de_la_filmación )**: Se ingresa el título de una filmación esperando como respuesta el título, el año de estreno y el score.
 
-- def votos_titulo( titulo_de_la_filmación ): Se ingresa el título de una filmación esperando como respuesta el título, la cantidad de votos y el valor promedio de las votaciones. 
+- **def votos_titulo( titulo_de_la_filmación )**: Se ingresa el título de una filmación esperando como respuesta el título, la cantidad de votos y el valor promedio de las votaciones. 
 
-- def get_actor( nombre_actor ): Se ingresa el nombre de un actor que se encuentre dentro de un dataset debiendo devolver el éxito del mismo medido a través del retorno. Además, la cantidad de películas que en las que ha participado y el promedio de retorno.
+- **def get_actor( nombre_actor )**: Se ingresa el nombre de un actor que se encuentre dentro de un dataset debiendo devolver el éxito del mismo medido a través del retorno. Además, la cantidad de películas que en las que ha participado y el promedio de retorno.
 
-- def get_director( nombre_director ): Se ingresa el nombre de un director que se encuentre dentro de un dataset debiendo devolver el éxito del mismo medido a través del retorno. Además, devolvera el nombre de cada película con la fecha de lanzamiento, retorno individual, costo y ganancia de la misma.
+- **def get_director( nombre_director )**: Se ingresa el nombre de un director que se encuentre dentro de un dataset debiendo devolver el éxito del mismo medido a través del retorno. Además, devolvera el nombre de cada película con la fecha de lanzamiento, retorno individual, costo y ganancia de la misma.
 
 4. Desarrollo de la API:  
 Se utilizó el framework FastAPI para implementar las funciones creadas.
