@@ -77,9 +77,11 @@ Se aplicó la técnica TF-IDF para vectorizar los datos, asegurando una reducci�
 
 ## Datos y Fuentes
 
-Link directo a los datasets: https://drive.google.com/drive/folders/1X_LdCoGTHJDbD28_dJTxaD4fVuQC9Wt5
+[Link de los Datasets](https://drive.google.com/drive/folders/1X_LdCoGTHJDbD28_dJTxaD4fVuQC9Wt5)
 
-Link Render de fastapi docs del proyecto del sistema de recomendacion: https://proyecto-individual-henry-11.onrender.com/docs
+[Link a Render](https://proyecto-individual-henry-11.onrender.com/docs)
+
+[Video Demostrativo de la Api](https://www.youtube.com/watch?v=ctjgmCjU-EY&t=2s)
 
 ## Resultados y Conclusiones
 
